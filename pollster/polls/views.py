@@ -1,5 +1,5 @@
 from django.template import loader 
-from django.http import HttpResponse, HttpResponseRedirect 
+from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
 from django.shortcuts import get_object_or_404, render 
 from django.urls import reverse 
 
@@ -33,6 +33,7 @@ def results(request, question_id):
 # Vote for a question choice 
 
 
+
 def vote(request, question_id): 
 	# print(request.POST['choice']) 
 	question = get_object_or_404(Question, pk = question_id) 
@@ -52,3 +53,17 @@ def vote(request, question_id):
 		# user hits the Back button. 
 		return HttpResponseRedirect(reverse('polls:results', args =(question.id, ))) 
 
+#for charts 		
+
+
+def resultsData(request, obj):
+    votedata = []
+
+    question = Question.objects.get(id=obj)
+    votes = question.choice_set.all()
+
+    for i in votes:
+        votedata.append({i.choice_text:i.votes})
+
+    print(votedata)
+    return JsonResponse(votedata, safe=False)
